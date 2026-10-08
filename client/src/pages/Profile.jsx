@@ -15,7 +15,8 @@ import {
   Building,
   Briefcase
 } from 'lucide-react';
-import api from '../services/api.js';
+import { getAddresses, saveAddress, deleteAddress } from '../services/dataService.js';
+import { supabase } from '../services/supabase.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import AddressModal from '../components/AddressModal.jsx';
 import toast from 'react-hot-toast';
@@ -51,10 +52,8 @@ export default function Profile() {
   const loadAddresses = async () => {
     try {
       setLoadingAddresses(true);
-      const res = await api.get('/addresses');
-      if (res.success) {
-        setAddresses(res.addresses || []);
-      }
+      const data = await getAddresses(user?.id);
+      setAddresses(data || []);
     } catch (err) {
       console.error('Failed to load addresses:', err);
     } finally {
@@ -77,9 +76,11 @@ export default function Profile() {
     }
     try {
       setSavingPassword(true);
-      const res = await api.put('/auth/change-password', { currentPassword, newPassword });
-      if (res.success) {
-        toast.success(res.message || 'Password changed successfully!');
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Password changed successfully in Supabase!');
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
@@ -93,8 +94,9 @@ export default function Profile() {
 
   const handleSetDefaultAddress = async (addrId) => {
     try {
-      const res = await api.patch(`/addresses/${addrId}/default`);
-      if (res.success) {
+      const addr = addresses.find(a => String(a.id) === String(addrId));
+      if (addr) {
+        await saveAddress({ ...addr, is_default: true }, user?.id);
         toast.success('Default address updated!');
         loadAddresses();
       }
@@ -106,11 +108,9 @@ export default function Profile() {
   const handleDeleteAddress = async (addrId) => {
     if (!window.confirm('Are you sure you want to delete this delivery address?')) return;
     try {
-      const res = await api.delete(`/addresses/${addrId}`);
-      if (res.success) {
-        toast.success('Address deleted successfully!');
-        loadAddresses();
-      }
+      await deleteAddress(addrId);
+      toast.success('Address deleted successfully!');
+      loadAddresses();
     } catch (err) {
       toast.error('Failed to delete address');
     }

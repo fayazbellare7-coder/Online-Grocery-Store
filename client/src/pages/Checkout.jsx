@@ -15,7 +15,7 @@ import {
   Sparkles,
   Lock
 } from 'lucide-react';
-import api from '../services/api.js';
+import { getAddresses, getDeliverySlots, createOrder } from '../services/dataService.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import AddressModal from '../components/AddressModal.jsx';
@@ -24,7 +24,7 @@ import toast from 'react-hot-toast';
 
 export default function Checkout() {
   const { isAuthenticated, user } = useAuth();
-  const { items, summary, refreshCart } = useCart();
+  const { items, summary, clearCart, refreshCart } = useCart();
   const navigate = useNavigate();
 
   // Address state
@@ -62,27 +62,37 @@ export default function Checkout() {
   const loadCheckoutData = async () => {
     try {
       setLoading(true);
-      const [addrRes, slotRes] = await Promise.all([
-        api.get('/addresses'),
-        api.get('/slots'),
+      const [addrs, slots] = await Promise.all([
+        getAddresses(user?.id),
+        getDeliverySlots(),
       ]);
 
-      if (addrRes.success) {
-        setAddresses(addrRes.addresses || []);
-        const defaultAddr = addrRes.addresses?.find((a) => a.is_default === 1) || addrRes.addresses?.[0];
+      if (addrs) {
+        setAddresses(addrs);
+        const defaultAddr = addrs.find((a) => a.is_default === 1 || a.is_default === true) || addrs[0];
         if (defaultAddr) {
           setSelectedAddressId(defaultAddr.id);
         }
       }
 
-      if (slotRes.success) {
-        setSlotsByDate(slotRes.slotsByDate || {});
-        const dateKeys = Object.keys(slotRes.slotsByDate || {});
+      if (slots) {
+        const grouped = {};
+        slots.forEach((s) => {
+          const d = s.date;
+          if (!grouped[d]) grouped[d] = [];
+          grouped[d].push({
+            ...s,
+            isAvailable: (s.booked || 0) < (s.capacity || 10),
+            remaining: Math.max(0, (s.capacity || 10) - (s.booked || 0))
+          });
+        });
+
+        setSlotsByDate(grouped);
+        const dateKeys = Object.keys(grouped);
         setDates(dateKeys);
         if (dateKeys.length > 0) {
           setSelectedDate(dateKeys[0]);
-          // Find first available slot
-          const firstAvail = slotRes.slotsByDate[dateKeys[0]]?.find((s) => s.isAvailable);
+          const firstAvail = grouped[dateKeys[0]]?.find((s) => s.isAvailable);
           if (firstAvail) {
             setSelectedSlotId(firstAvail.id);
           }
@@ -115,17 +125,34 @@ export default function Checkout() {
 
     try {
       setSubmitting(true);
-      const res = await api.post('/orders', {
-        addressId: selectedAddressId,
-        slotId: selectedSlotId,
-        paymentMethod,
-        paymentSuccess: onlinePaymentSuccess,
+      const selectedAddress = addresses.find(a => String(a.id) === String(selectedAddressId));
+      const allSlots = Object.values(slotsByDate).flat();
+      const selectedSlot = allSlots.find(s => String(s.id) === String(selectedSlotId));
+
+      const newOrder = await createOrder({
+        user_id: user?.id,
+        customer_name: user?.name,
+        customer_email: user?.email,
+        address_snapshot: selectedAddress || { line1: 'Springfield' },
+        slot_id: selectedSlotId,
+        slot_snapshot: selectedSlot ? { date: selectedSlot.date, window: `${selectedSlot.start_time} - ${selectedSlot.end_time}` } : { window: 'Morning' },
+        payment_method: paymentMethod,
+        items: items.map(i => ({
+          id: i.productId || i.id,
+          name: i.name,
+          price: i.unitPrice || i.price,
+          unit: i.unit,
+          image_url: i.imageUrl || i.image_url,
+          quantity: i.quantity
+        })),
+        subtotal: summary.subtotal,
+        delivery_fee: summary.deliveryFee,
+        tax: summary.tax,
+        total: summary.total
       });
 
-      if (res.success) {
-        await refreshCart();
-        navigate(`/order-success/${res.order.id}`, { state: { order: res.order } });
-      }
+      await clearCart();
+      navigate(`/order-success/${newOrder.id}`, { state: { order: newOrder } });
     } catch (err) {
       toast.error(err.message || 'Failed to place order');
     } finally {

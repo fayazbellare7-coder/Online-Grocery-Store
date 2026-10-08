@@ -12,7 +12,7 @@ import {
   RotateCcw,
   ShoppingBag
 } from 'lucide-react';
-import api from '../services/api.js';
+import { getCategories, getProducts } from '../services/dataService.js';
 import ProductCard from '../components/ProductCard.jsx';
 import ProductGridSkeleton from '../components/ProductGridSkeleton.jsx';
 import EmptyState from '../components/EmptyState.jsx';
@@ -62,10 +62,8 @@ export default function Products() {
   useEffect(() => {
     async function loadCategories() {
       try {
-        const res = await api.get('/categories');
-        if (res.success) {
-          setCategories(res.categories || []);
-        }
+        const cats = await getCategories();
+        setCategories(cats || []);
       } catch (err) {
         console.error('Error loading categories:', err);
       }
@@ -75,25 +73,23 @@ export default function Products() {
 
   // Fetch products when query params change
   useEffect(() => {
-    async function fetchProducts() {
+    async function fetchProductsList() {
       try {
         setLoading(true);
-        const params = new URLSearchParams();
-        if (querySearch) params.set('search', querySearch);
-        if (queryCategory) params.set('category', queryCategory);
-        if (queryDeals) params.set('deals', 'true');
-        if (queryInStock) params.set('inStock', 'true');
-        if (queryMinPrice) params.set('minPrice', queryMinPrice);
-        if (queryMaxPrice) params.set('maxPrice', queryMaxPrice);
-        if (querySort) params.set('sort', querySort);
-        params.set('page', queryPage.toString());
-        params.set('limit', '12');
+        const res = await getProducts({
+          category: queryCategory,
+          search: querySearch,
+          onSale: queryDeals,
+          inStock: queryInStock,
+          minPrice: queryMinPrice,
+          maxPrice: queryMaxPrice,
+          sort: querySort,
+          page: queryPage,
+          limit: 12
+        });
 
-        const res = await api.get(`/products?${params.toString()}`);
-        if (res.success) {
-          setProducts(res.products || []);
-          setPagination(res.pagination || { total: 0, page: 1, limit: 12, totalPages: 1 });
-        }
+        setProducts(res.products || []);
+        setPagination(res.pagination || { total: 0, page: 1, limit: 12, totalPages: 1 });
       } catch (err) {
         console.error('Error fetching products:', err);
       } finally {
@@ -101,7 +97,7 @@ export default function Products() {
       }
     }
 
-    fetchProducts();
+    fetchProductsList();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [querySearch, queryCategory, queryDeals, queryInStock, queryMinPrice, queryMaxPrice, querySort, queryPage]);
 

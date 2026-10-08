@@ -13,7 +13,7 @@ import {
   ShoppingBag,
   Percent
 } from 'lucide-react';
-import api from '../services/api.js';
+import { getCategories, getProducts } from '../services/dataService.js';
 import ProductCard from '../components/ProductCard.jsx';
 import ProductGridSkeleton from '../components/ProductGridSkeleton.jsx';
 
@@ -27,15 +27,15 @@ export default function Home() {
     async function loadHomeData() {
       try {
         setLoading(true);
-        const [catsRes, dealsRes, featRes] = await Promise.all([
-          api.get('/categories'),
-          api.get('/products?deals=true&limit=8'),
-          api.get('/products?sort=popular&limit=8')
+        const [cats, dealsRes, featRes] = await Promise.all([
+          getCategories(),
+          getProducts({ onSale: true, limit: 8 }),
+          getProducts({ sort: 'featured', limit: 8 })
         ]);
 
-        if (catsRes.success) setCategories(catsRes.categories || []);
-        if (dealsRes.success) setDealProducts(dealsRes.products || []);
-        if (featRes.success) setFeaturedProducts(featRes.products || []);
+        setCategories(cats || []);
+        setDealProducts(dealsRes.products || []);
+        setFeaturedProducts(featRes.products || []);
       } catch (err) {
         console.error('Failed to load home data:', err);
       } finally {

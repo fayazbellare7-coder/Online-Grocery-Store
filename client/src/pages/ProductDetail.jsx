@@ -15,7 +15,7 @@ import {
   Clock,
   Package
 } from 'lucide-react';
-import api from '../services/api.js';
+import { getProductById, getProducts } from '../services/dataService.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useWishlist } from '../context/WishlistContext.jsx';
 import ProductCard from '../components/ProductCard.jsx';
@@ -36,10 +36,12 @@ export default function ProductDetail() {
     async function loadProduct() {
       try {
         setLoading(true);
-        const res = await api.get(`/products/${id}`);
-        if (res.success) {
-          setProduct(res.product);
-          setRelatedProducts(res.relatedProducts || []);
+        const prod = await getProductById(id);
+        if (prod) {
+          setProduct(prod);
+          // fetch related products in same category
+          const relRes = await getProducts({ category: prod.category_id || prod.category_slug, limit: 5 });
+          setRelatedProducts((relRes.products || []).filter(p => String(p.id) !== String(id)).slice(0, 4));
           setQuantity(1);
         }
       } catch (err) {

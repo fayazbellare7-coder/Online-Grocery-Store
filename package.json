@@ -1,16 +1,12 @@
 {
-  "name": "freshcart-monorepo",
+  "name": "freshcart-supabase-app",
   "version": "1.0.0",
-  "description": "FreshCart - Online Grocery Store & Home Delivery Application",
+  "description": "FreshCart - Online Grocery Store & Home Delivery Application linked with Supabase",
   "private": true,
   "scripts": {
-    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"cyan,green\" \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
-    "seed": "npm run seed --prefix server",
-    "test": "npm run test --prefix server",
+    "dev": "npm run dev --prefix client",
     "build": "npm run build --prefix client",
-    "install:all": "npm install && npm install --prefix server && npm install --prefix client"
-  },
-  "devDependencies": {
-    "concurrently": "^9.1.2"
+    "preview": "npm run preview --prefix client",
+    "install:all": "npm install --prefix client"
   }
 }

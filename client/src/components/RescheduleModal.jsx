@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
-import api from '../services/api.js';
+import { getDeliverySlots, getOrderById } from '../services/dataService.js';
+import { supabase } from '../services/supabase.js';
 import toast from 'react-hot-toast';
 
 export default function RescheduleModal({ isOpen, onClose, orderId, currentSlot, onSuccess }) {
@@ -20,10 +21,23 @@ export default function RescheduleModal({ isOpen, onClose, orderId, currentSlot,
   const fetchSlots = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/slots');
-      if (res.success) {
-        setSlotsByDate(res.slotsByDate || {});
-        const dateKeys = Object.keys(res.slotsByDate || {});
+      const slots = await getDeliverySlots();
+      if (slots) {
+        const grouped = {};
+        slots.forEach((s) => {
+          const d = s.date;
+          if (!grouped[d]) grouped[d] = [];
+          grouped[d].push({
+            ...s,
+            label: `${s.start_time} - ${s.end_time}`,
+            formattedWindow: `${s.start_time} - ${s.end_time}`,
+            isAvailable: (s.booked || 0) < (s.capacity || 10),
+            remainingCapacity: Math.max(0, (s.capacity || 10) - (s.booked || 0))
+          });
+        });
+
+        setSlotsByDate(grouped);
+        const dateKeys = Object.keys(grouped);
         setDates(dateKeys);
         if (dateKeys.length > 0) {
           setSelectedDate(dateKeys[0]);
@@ -48,12 +62,42 @@ export default function RescheduleModal({ isOpen, onClose, orderId, currentSlot,
 
     try {
       setSubmitting(true);
-      const res = await api.patch(`/orders/${orderId}/reschedule`, { newSlotId: selectedSlotId });
-      if (res.success) {
-        toast.success(res.message || 'Order rescheduled successfully!');
-        onSuccess();
-        onClose();
+      const allSlots = Object.values(slotsByDate).flat();
+      const newSlot = allSlots.find(s => String(s.id) === String(selectedSlotId));
+      const slotSnapshot = newSlot ? { date: newSlot.date, window: `${newSlot.start_time} - ${newSlot.end_time}` } : {};
+
+      // Update in Supabase or local storage
+      try {
+        await supabase
+          .from('orders')
+          .update({ slot_id: selectedSlotId, slot_snapshot: slotSnapshot })
+          .eq('id', orderId);
+
+        await supabase.from('order_status_history').insert([{
+          order_id: orderId,
+          status: 'Rescheduled',
+          notes: `Delivery rescheduled to ${newSlot?.date} (${newSlot?.start_time} - ${newSlot?.end_time})`
+        }]);
+      } catch (e) {
+        // Fallback local
+        const local = JSON.parse(localStorage.getItem('freshcart_orders') || '[]');
+        const idx = local.findIndex(o => String(o.id) === String(orderId));
+        if (idx !== -1) {
+          local[idx].slot_id = selectedSlotId;
+          local[idx].slot_snapshot = slotSnapshot;
+          if (!local[idx].status_history) local[idx].status_history = [];
+          local[idx].status_history.push({
+            status: 'Rescheduled',
+            notes: `Delivery rescheduled to ${newSlot?.date} (${newSlot?.start_time} - ${newSlot?.end_time})`,
+            timestamp: new Date().toISOString()
+          });
+          localStorage.setItem('freshcart_orders', JSON.stringify(local));
+        }
       }
+
+      toast.success('Order delivery slot rescheduled successfully!');
+      onSuccess();
+      onClose();
     } catch (err) {
       toast.error(err.message || 'Failed to reschedule order');
     } finally {

@@ -14,7 +14,7 @@ import {
   ChevronRight,
   Eye
 } from 'lucide-react';
-import api from '../../services/api.js';
+import { getOrders, updateOrderStatus } from '../../services/dataService.js';
 import toast from 'react-hot-toast';
 
 export default function AdminOrders() {
@@ -38,17 +38,26 @@ export default function AdminOrders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const params = new URLSearchParams();
-      if (statusFilter !== 'all') params.set('status', statusFilter);
-      if (search.trim()) params.set('search', search.trim());
-      params.set('page', page.toString());
-      params.set('limit', '15');
-
-      const res = await api.get(`/admin/orders?${params.toString()}`);
-      if (res.success) {
-        setOrders(res.orders || []);
-        setPagination({ total: res.pagination.total, totalPages: res.pagination.totalPages });
+      let list = await getOrders(null, true);
+      if (statusFilter !== 'all') {
+        list = list.filter(o => o.status === statusFilter);
       }
+      if (search.trim()) {
+        const q = search.trim().toLowerCase();
+        list = list.filter(o =>
+          String(o.id).includes(q) ||
+          (o.customer_name && o.customer_name.toLowerCase().includes(q)) ||
+          (o.customer_email && o.customer_email.toLowerCase().includes(q))
+        );
+      }
+
+      const total = list.length;
+      const limit = 15;
+      const start = (page - 1) * limit;
+      const paginated = list.slice(start, start + limit);
+
+      setOrders(paginated);
+      setPagination({ total, totalPages: Math.ceil(total / limit) || 1 });
     } catch (err) {
       toast.error('Failed to load orders');
     } finally {
@@ -73,16 +82,10 @@ export default function AdminOrders() {
 
     try {
       setSubmitting(true);
-      const res = await api.patch(`/admin/orders/${selectedOrder.id}/status`, {
-        status: newStatus,
-        notes: statusNotes || undefined,
-      });
-
-      if (res.success) {
-        toast.success(res.message);
-        setIsModalOpen(false);
-        fetchOrders();
-      }
+      await updateOrderStatus(selectedOrder.id, newStatus, statusNotes);
+      toast.success(`Order #${selectedOrder.id} status updated to ${newStatus}`);
+      setIsModalOpen(false);
+      fetchOrders();
     } catch (err) {
       toast.error(err.message || 'Failed to update status');
     } finally {

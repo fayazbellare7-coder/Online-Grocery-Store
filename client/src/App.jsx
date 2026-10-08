@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { seedSupabaseDatabase } from './services/dataService.js';
 
 // Context Providers
 import { AuthProvider } from './context/AuthContext.jsx';
@@ -59,6 +60,10 @@ function CustomerLayout() {
 }
 
 export default function App() {
+  useEffect(() => {
+    seedSupabaseDatabase();
+  }, []);
+
   return (
     <AuthProvider>
       <CartProvider>

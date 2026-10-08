@@ -14,7 +14,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import api from '../../services/api.js';
+import { getProducts, getCategories, createProduct, updateProduct, deleteProduct } from '../../services/dataService.js';
 import toast from 'react-hot-toast';
 
 export default function AdminProducts() {
@@ -52,8 +52,8 @@ export default function AdminProducts() {
 
   const loadCategories = async () => {
     try {
-      const res = await api.get('/categories');
-      if (res.success) setCategories(res.categories || []);
+      const cats = await getCategories();
+      setCategories(cats || []);
     } catch (e) {
       console.error(e);
     }
@@ -62,18 +62,14 @@ export default function AdminProducts() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const params = new URLSearchParams();
-      if (search.trim()) params.set('search', search.trim());
-      if (selectedCategory) params.set('category', selectedCategory);
-      params.set('includeInactive', 'true');
-      params.set('page', page.toString());
-      params.set('limit', '15');
-
-      const res = await api.get(`/products?${params.toString()}`);
-      if (res.success) {
-        setProducts(res.products || []);
-        setPagination({ total: res.pagination.total, totalPages: res.pagination.totalPages });
-      }
+      const res = await getProducts({
+        search: search.trim(),
+        category: selectedCategory,
+        page,
+        limit: 15
+      });
+      setProducts(res.products || []);
+      setPagination({ total: res.pagination?.total || res.products.length, totalPages: res.pagination?.totalPages || 1 });
     } catch (err) {
       toast.error('Failed to load products');
     } finally {
@@ -127,20 +123,14 @@ export default function AdminProducts() {
       };
 
       if (editingProduct) {
-        const res = await api.put(`/products/${editingProduct.id}`, payload);
-        if (res.success) {
-          toast.success('Product updated successfully!');
-          setIsModalOpen(false);
-          loadProducts();
-        }
+        await updateProduct(editingProduct.id, payload);
+        toast.success('Product updated successfully!');
       } else {
-        const res = await api.post('/products', payload);
-        if (res.success) {
-          toast.success('Product created successfully!');
-          setIsModalOpen(false);
-          loadProducts();
-        }
+        await createProduct(payload);
+        toast.success('Product created successfully!');
       }
+      setIsModalOpen(false);
+      loadProducts();
     } catch (err) {
       toast.error(err.message || 'Failed to save product');
     } finally {
@@ -150,11 +140,9 @@ export default function AdminProducts() {
 
   const handleToggleActive = async (p) => {
     try {
-      const res = await api.patch(`/products/${p.id}/toggle-active`);
-      if (res.success) {
-        toast.success(res.message);
-        loadProducts();
-      }
+      await updateProduct(p.id, { is_active: p.is_active ? 0 : 1 });
+      toast.success('Product status updated!');
+      loadProducts();
     } catch (err) {
       toast.error('Failed to toggle status');
     }
@@ -163,11 +151,9 @@ export default function AdminProducts() {
   const handleUpdateStock = async (p, newStock) => {
     if (newStock < 0) return;
     try {
-      const res = await api.patch(`/products/${p.id}/stock`, { stock: newStock });
-      if (res.success) {
-        toast.success(`Stock updated for ${p.name}`);
-        setProducts((prev) => prev.map((item) => item.id === p.id ? { ...item, stock: newStock } : item));
-      }
+      await updateProduct(p.id, { stock: newStock });
+      toast.success(`Stock updated for ${p.name}`);
+      setProducts((prev) => prev.map((item) => item.id === p.id ? { ...item, stock: newStock } : item));
     } catch (err) {
       toast.error('Failed to update stock');
     }
@@ -176,13 +162,11 @@ export default function AdminProducts() {
   const handleDelete = async (p) => {
     if (!window.confirm(`Are you sure you want to permanently delete "${p.name}"?`)) return;
     try {
-      const res = await api.delete(`/products/${p.id}`);
-      if (res.success) {
-        toast.success('Product deleted successfully');
-        loadProducts();
-      }
+      await deleteProduct(p.id);
+      toast.success('Product deleted successfully');
+      loadProducts();
     } catch (err) {
-      toast.error(err.message || 'Failed to delete product');
+      toast.error('Failed to delete product');
     }
   };
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, MapPin, Building, Home, Briefcase, Check } from 'lucide-react';
-import api from '../services/api.js';
+import { saveAddress } from '../services/dataService.js';
 import toast from 'react-hot-toast';
 
 export default function AddressModal({ isOpen, onClose, onSuccess, initialAddress = null }) {
@@ -50,21 +50,13 @@ export default function AddressModal({ isOpen, onClose, onSuccess, initialAddres
 
     try {
       setLoading(true);
-      if (initialAddress) {
-        const res = await api.put(`/addresses/${initialAddress.id}`, formData);
-        if (res.success) {
-          toast.success('Address updated successfully!');
-          onSuccess(res.address);
-          onClose();
-        }
-      } else {
-        const res = await api.post('/addresses', formData);
-        if (res.success) {
-          toast.success('Address saved successfully!');
-          onSuccess(res.address);
-          onClose();
-        }
-      }
+      const saved = await saveAddress({
+        ...(initialAddress ? { id: initialAddress.id } : {}),
+        ...formData
+      });
+      toast.success(initialAddress ? 'Address updated successfully!' : 'Address saved successfully!');
+      onSuccess(saved);
+      onClose();
     } catch (err) {
       toast.error(err.message || 'Failed to save address');
     } finally {

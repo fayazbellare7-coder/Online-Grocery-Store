@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Calendar, CheckCircle2, AlertCircle, Edit2, X, Plus } from 'lucide-react';
-import api from '../../services/api.js';
+import { getDeliverySlots, updateDeliverySlot } from '../../services/dataService.js';
 import toast from 'react-hot-toast';
 
 export default function AdminSlots() {
@@ -17,10 +17,24 @@ export default function AdminSlots() {
   const fetchSlots = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/slots');
-      if (res.success) {
-        setSlotsByDate(res.slotsByDate || {});
-        const dateKeys = Object.keys(res.slotsByDate || {});
+      const slots = await getDeliverySlots();
+      if (slots) {
+        const grouped = {};
+        slots.forEach((s) => {
+          const d = s.date;
+          if (!grouped[d]) grouped[d] = [];
+          grouped[d].push({
+            ...s,
+            label: `${s.start_time} - ${s.end_time}`,
+            formattedWindow: `${s.start_time} - ${s.end_time}`,
+            isAvailable: (s.booked || 0) < (s.capacity || 10),
+            remainingCapacity: Math.max(0, (s.capacity || 10) - (s.booked || 0)),
+            isFull: (s.booked || 0) >= (s.capacity || 10)
+          });
+        });
+
+        setSlotsByDate(grouped);
+        const dateKeys = Object.keys(grouped);
         setDates(dateKeys);
         if (dateKeys.length > 0 && !selectedDate) {
           setSelectedDate(dateKeys[0]);
@@ -43,14 +57,12 @@ export default function AdminSlots() {
 
     try {
       setSubmitting(true);
-      const res = await api.patch(`/slots/${editingSlot.id}/capacity`, {
+      await updateDeliverySlot(editingSlot.id, {
         capacity: parseInt(newCapacity, 10)
       });
-      if (res.success) {
-        toast.success('Slot capacity updated successfully!');
-        setEditingSlot(null);
-        fetchSlots();
-      }
+      toast.success('Slot capacity updated successfully!');
+      setEditingSlot(null);
+      fetchSlots();
     } catch (err) {
       toast.error(err.message || 'Failed to update capacity');
     } finally {

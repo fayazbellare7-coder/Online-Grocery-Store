@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Layers, Plus, Edit2, Trash2, X } from 'lucide-react';
-import api from '../../services/api.js';
+import { getCategories, createCategory, updateCategory, deleteCategory } from '../../services/dataService.js';
 import toast from 'react-hot-toast';
 
 export default function AdminCategories() {
@@ -15,8 +15,8 @@ export default function AdminCategories() {
   const loadCategories = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/categories');
-      if (res.success) setCategories(res.categories || []);
+      const cats = await getCategories();
+      setCategories(cats || []);
     } catch (e) {
       toast.error('Failed to load categories');
     } finally {
@@ -50,20 +50,14 @@ export default function AdminCategories() {
     try {
       setSubmitting(true);
       if (editingCat) {
-        const res = await api.put(`/categories/${editingCat.id}`, formData);
-        if (res.success) {
-          toast.success('Category updated successfully!');
-          setIsModalOpen(false);
-          loadCategories();
-        }
+        await updateCategory(editingCat.id, formData);
+        toast.success('Category updated successfully!');
       } else {
-        const res = await api.post('/categories', formData);
-        if (res.success) {
-          toast.success('Category created successfully!');
-          setIsModalOpen(false);
-          loadCategories();
-        }
+        await createCategory(formData);
+        toast.success('Category created successfully!');
       }
+      setIsModalOpen(false);
+      loadCategories();
     } catch (err) {
       toast.error(err.message || 'Failed to save category');
     } finally {
@@ -74,11 +68,9 @@ export default function AdminCategories() {
   const handleDelete = async (c) => {
     if (!window.confirm(`Are you sure you want to delete category "${c.name}"?`)) return;
     try {
-      const res = await api.delete(`/categories/${c.id}`);
-      if (res.success) {
-        toast.success(res.message || 'Category deleted');
-        loadCategories();
-      }
+      await deleteCategory(c.id);
+      toast.success('Category deleted successfully');
+      loadCategories();
     } catch (err) {
       toast.error(err.message || 'Failed to delete category');
     }

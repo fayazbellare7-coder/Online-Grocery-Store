@@ -15,7 +15,7 @@ import {
   Banknote,
   ShieldCheck
 } from 'lucide-react';
-import api from '../services/api.js';
+import { getOrderById, cancelOrder } from '../services/dataService.js';
 import { useCart } from '../context/CartContext.jsx';
 import OrderStatusTimeline from '../components/OrderStatusTimeline.jsx';
 import RescheduleModal from '../components/RescheduleModal.jsx';
@@ -24,7 +24,7 @@ import toast from 'react-hot-toast';
 export default function OrderDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { refreshCart, setIsCartOpen } = useCart();
+  const { addToCart, refreshCart, setIsCartOpen } = useCart();
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,9 +33,9 @@ export default function OrderDetail() {
   const fetchOrder = async () => {
     try {
       setLoading(true);
-      const res = await api.get(`/orders/${id}`);
-      if (res.success) {
-        setOrder(res.order);
+      const data = await getOrderById(id);
+      if (data) {
+        setOrder(data);
       }
     } catch (err) {
       toast.error(err.message || 'Order not found');
@@ -53,13 +53,9 @@ export default function OrderDetail() {
     if (!window.confirm('Are you sure you want to cancel this order? Warehouse stock will be restored.')) return;
 
     try {
-      const res = await api.patch(`/orders/${id}/cancel`, {
-        reason: 'Customer cancelled from order details page'
-      });
-      if (res.success) {
-        toast.success(res.message);
-        fetchOrder();
-      }
+      await cancelOrder(id);
+      toast.success('Order cancelled successfully');
+      fetchOrder();
     } catch (err) {
       toast.error(err.message || 'Failed to cancel order');
     }
@@ -67,10 +63,18 @@ export default function OrderDetail() {
 
   const handleReorder = async () => {
     try {
-      const res = await api.post(`/orders/${id}/reorder`);
-      if (res.success) {
-        await refreshCart();
-        toast.success(res.message || 'Items added to cart!', { icon: '🛒' });
+      if (order && order.items) {
+        for (const item of order.items) {
+          addToCart({
+            id: item.product_id || item.id,
+            name: item.name_snapshot || item.name,
+            price: item.price_snapshot || item.price,
+            unit: item.unit_snapshot || item.unit,
+            image_url: item.image_snapshot || item.image_url,
+            stock: 50
+          }, item.quantity || 1);
+        }
+        toast.success('Items added to cart!', { icon: '🛒' });
         setIsCartOpen(true);
       }
     } catch (err) {

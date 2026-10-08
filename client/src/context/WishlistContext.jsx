@@ -1,76 +1,92 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import api from '../services/api.js';
+import { supabase } from '../services/supabase.js';
 import { useAuth } from './AuthContext.jsx';
 import toast from 'react-hot-toast';
 
 const WishlistContext = createContext(null);
 
 export function WishlistProvider({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchWishlist = useCallback(async () => {
-    if (isAuthenticated) {
+    let items = [];
+    const local = localStorage.getItem('freshcart_wishlist_items');
+    try {
+      items = local ? JSON.parse(local) : [];
+    } catch {
+      items = [];
+    }
+
+    if (isAuthenticated && user?.id) {
       try {
         setLoading(true);
-        const res = await api.get('/wishlist');
-        if (res.success) {
-          setWishlistItems(res.items || []);
+        const { data, error } = await supabase
+          .from('wishlist_items')
+          .select('*, products(*)')
+          .eq('user_id', user.id);
+
+        if (!error && data && data.length > 0) {
+          items = data.map(w => ({
+            ...w.products,
+            wishlist_id: w.id,
+            product_id: w.product_id
+          }));
         }
       } catch (err) {
-        console.error('Failed to fetch wishlist:', err);
+        console.warn('Supabase wishlist fetch fallback:', err.message);
       } finally {
         setLoading(false);
       }
-    } else {
-      const local = localStorage.getItem('freshcart_guest_wishlist');
-      try {
-        setWishlistItems(local ? JSON.parse(local) : []);
-      } catch {
-        setWishlistItems([]);
-      }
     }
-  }, [isAuthenticated]);
+
+    setWishlistItems(items);
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     fetchWishlist();
   }, [fetchWishlist]);
 
   const toggleWishlist = async (product) => {
-    if (isAuthenticated) {
-      try {
-        const res = await api.post('/wishlist/toggle', { productId: product.id });
-        if (res.success) {
-          toast.success(res.message, { icon: res.isWishlisted ? '❤️' : '🤍' });
-          fetchWishlist();
-          return res.isWishlisted;
+    let current = [...wishlistItems];
+    const exists = current.some((item) => String(item.id) === String(product.id) || String(item.product_id) === String(product.id));
+
+    if (exists) {
+      current = current.filter((item) => String(item.id) !== String(product.id) && String(item.product_id) !== String(product.id));
+      toast.success(`Removed ${product.name} from wishlist`, { icon: '🤍' });
+
+      if (isAuthenticated && user?.id) {
+        try {
+          await supabase.from('wishlist_items').delete().match({ user_id: user.id, product_id: product.id });
+        } catch (e) {
+          // Fallback
         }
-      } catch (err) {
-        toast.error(err.message || 'Failed to update wishlist');
       }
     } else {
-      let current = [...wishlistItems];
-      const exists = current.some((item) => item.id === product.id || item.product_id === product.id);
-      if (exists) {
-        current = current.filter((item) => item.id !== product.id && item.product_id !== product.id);
-        toast.success(`Removed ${product.name} from wishlist`, { icon: '🤍' });
-      } else {
-        current.push({
-          ...product,
-          product_id: product.id,
-          wishlist_item_id: `guest_${product.id}`,
-        });
-        toast.success(`Added ${product.name} to wishlist`, { icon: '❤️' });
+      current.push({
+        ...product,
+        product_id: product.id,
+        wishlist_id: `wl_${product.id}_${Date.now()}`
+      });
+      toast.success(`Added ${product.name} to wishlist`, { icon: '❤️' });
+
+      if (isAuthenticated && user?.id) {
+        try {
+          await supabase.from('wishlist_items').upsert([{ user_id: user.id, product_id: product.id }]);
+        } catch (e) {
+          // Fallback
+        }
       }
-      setWishlistItems(current);
-      localStorage.setItem('freshcart_guest_wishlist', JSON.stringify(current));
-      return !exists;
     }
+
+    setWishlistItems(current);
+    localStorage.setItem('freshcart_wishlist_items', JSON.stringify(current));
+    return !exists;
   };
 
   const isInWishlist = (productId) => {
-    return wishlistItems.some((item) => item.id === productId || item.product_id === productId);
+    return wishlistItems.some((item) => String(item.id) === String(productId) || String(item.product_id) === String(productId));
   };
 
   const value = {

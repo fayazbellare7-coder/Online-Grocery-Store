@@ -12,25 +12,25 @@ import {
   AlertCircle,
   ShoppingBag
 } from 'lucide-react';
-import api from '../services/api.js';
+import { getOrders, cancelOrder } from '../services/dataService.js';
+import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import EmptyState from '../components/EmptyState.jsx';
 import toast from 'react-hot-toast';
 
 export default function MyOrders() {
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterTab, setFilterTab] = useState('all'); // 'all' | 'active' | 'completed' | 'cancelled'
-  const { refreshCart, setIsCartOpen } = useCart();
+  const { addToCart, refreshCart, setIsCartOpen } = useCart();
   const navigate = useNavigate();
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/orders');
-      if (res.success) {
-        setOrders(res.orders || []);
-      }
+      const data = await getOrders(user?.id);
+      setOrders(data || []);
     } catch (err) {
       toast.error('Failed to load orders');
     } finally {
@@ -40,14 +40,23 @@ export default function MyOrders() {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [user]);
 
   const handleReorder = async (orderId) => {
     try {
-      const res = await api.post(`/orders/${orderId}/reorder`);
-      if (res.success) {
-        await refreshCart();
-        toast.success(res.message || 'Items added to your cart!', { icon: '🛒' });
+      const order = orders.find(o => String(o.id) === String(orderId));
+      if (order && order.items) {
+        for (const item of order.items) {
+          addToCart({
+            id: item.product_id || item.id,
+            name: item.name_snapshot || item.name,
+            price: item.price_snapshot || item.price,
+            unit: item.unit_snapshot || item.unit,
+            image_url: item.image_snapshot || item.image_url,
+            stock: 50
+          }, item.quantity || 1);
+        }
+        toast.success('Items added to your cart!', { icon: '🛒' });
         setIsCartOpen(true);
       }
     } catch (err) {
@@ -59,13 +68,9 @@ export default function MyOrders() {
     if (!window.confirm(`Are you sure you want to cancel Order #${orderId}?`)) return;
 
     try {
-      const res = await api.patch(`/orders/${orderId}/cancel`, {
-        reason: 'Customer cancelled from orders page'
-      });
-      if (res.success) {
-        toast.success(res.message);
-        fetchOrders();
-      }
+      await cancelOrder(orderId);
+      toast.success('Order cancelled successfully');
+      fetchOrders();
     } catch (err) {
       toast.error(err.message || 'Failed to cancel order');
     }
