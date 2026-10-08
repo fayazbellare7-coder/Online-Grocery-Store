@@ -83,13 +83,13 @@ export default function Home() {
   const handleAddRecipeBundle = () => {
     // Add 3 staple breakfast items if available
     const avocados = featuredProducts.find(p => p.name.toLowerCase().includes('avocado')) || {
-      id: 1, name: 'Organic Hass Avocados (Pack of 3)', price: 3.99, unit: '3 pcs', image_url: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=600&auto=format&fit=crop&q=80', stock: 25
+      id: 3, name: 'Fresh Hass Avocados', price: 240.00, unit: '2 pcs', image_url: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=600&auto=format&fit=crop&q=80', stock: 25
     };
     const sourdough = featuredProducts.find(p => p.name.toLowerCase().includes('bread') || p.name.toLowerCase().includes('sourdough')) || {
-      id: 4, name: 'Artisan Sourdough Bread Loaf', price: 4.50, unit: '500g', image_url: 'https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?w=600&auto=format&fit=crop&q=80', stock: 15
+      id: 14, name: 'Artisan Multigrain Sourdough Loaf', price: 110.00, unit: '400g', image_url: 'https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?w=600&auto=format&fit=crop&q=80', stock: 15
     };
     const eggs = featuredProducts.find(p => p.name.toLowerCase().includes('egg')) || {
-      id: 3, name: 'Pasture-Raised Organic Eggs (Dozen)', price: 5.99, unit: '12 pcs', image_url: 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=600&auto=format&fit=crop&q=80', stock: 30
+      id: 9, name: 'Farm Fresh Protein Brown Eggs', price: 95.00, unit: '12 pcs', image_url: 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=600&auto=format&fit=crop&q=80', stock: 30
     };
 
     addToCart(avocados, 1);

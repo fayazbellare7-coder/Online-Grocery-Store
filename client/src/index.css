@@ -5,11 +5,13 @@
 @layer base {
   body {
     @apply bg-[#FAFAF7] text-slate-900 selection:bg-emerald-500 selection:text-white antialiased;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight text-slate-900;
+    @apply tracking-tight text-slate-900;
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   }
 }
 

@@ -3,32 +3,28 @@ import { defaultCategories, defaultProducts, generateDeliverySlots, defaultAddre
 
 // Local storage keys for resilient offline/fallback state
 const STORAGE_KEYS = {
-  CATEGORIES: 'freshcart_categories',
-  PRODUCTS: 'freshcart_products',
-  SLOTS: 'freshcart_slots',
-  ADDRESSES: 'freshcart_addresses',
-  ORDERS: 'freshcart_orders',
-  WISHLIST: 'freshcart_wishlist',
-  CART: 'freshcart_cart',
-  SEEDED: 'freshcart_db_seeded_v1'
+  CATEGORIES: 'freshcart_categories_inr',
+  PRODUCTS: 'freshcart_products_inr',
+  SLOTS: 'freshcart_slots_inr',
+  ADDRESSES: 'freshcart_addresses_inr',
+  ORDERS: 'freshcart_orders_inr',
+  WISHLIST: 'freshcart_wishlist_inr',
+  CART: 'freshcart_cart_inr',
+  SEEDED: 'freshcart_db_seeded_inr'
 };
 
-// Initialize Local Fallback Storage if not present
+// Initialize Local Fallback Storage if not present or migrate old pricing
 function initLocalStorage() {
-  if (!localStorage.getItem(STORAGE_KEYS.CATEGORIES)) {
-    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(defaultCategories));
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.PRODUCTS)) {
+  const existingProds = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+  if (!existingProds || !localStorage.getItem('freshcart_inr_prices_v1')) {
     localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(defaultProducts));
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.SLOTS)) {
+    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(defaultCategories));
     localStorage.setItem(STORAGE_KEYS.SLOTS, JSON.stringify(generateDeliverySlots()));
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.ADDRESSES)) {
     localStorage.setItem(STORAGE_KEYS.ADDRESSES, JSON.stringify(defaultAddresses));
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.ORDERS)) {
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(defaultOrders));
+    localStorage.setItem('freshcart_inr_prices_v1', 'true');
+    // Clear old cart to avoid mismatched currency calculation
+    localStorage.removeItem('freshcart_active_cart');
   }
 }
 
