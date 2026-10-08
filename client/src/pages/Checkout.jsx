@@ -430,7 +430,7 @@ export default function Checkout() {
                     <span className="text-slate-800 font-medium truncate">{item.name}</span>
                   </div>
                   <span className="font-bold text-slate-900 flex-shrink-0">
-                    ${(item.unitPrice * item.quantity).toFixed(2)}
+                    ₹{(item.unitPrice * item.quantity).toFixed(2)}
                   </span>
                 </div>
               ))}
@@ -440,23 +440,23 @@ export default function Checkout() {
             <div className="space-y-2 pt-3 border-t border-slate-100 text-xs text-slate-600">
               <div className="flex justify-between">
                 <span>Items Subtotal</span>
-                <span className="font-bold text-slate-900">${summary.subtotal.toFixed(2)}</span>
+                <span className="font-bold text-slate-900">₹{summary.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Scheduled Delivery Fee</span>
                 {summary.deliveryFee === 0 ? (
                   <span className="font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">FREE</span>
                 ) : (
-                  <span className="font-bold text-slate-900">${summary.deliveryFee.toFixed(2)}</span>
+                  <span className="font-bold text-slate-900">₹{summary.deliveryFee.toFixed(2)}</span>
                 )}
               </div>
               <div className="flex justify-between">
                 <span>Estimated Tax (5%)</span>
-                <span className="font-bold text-slate-900">${summary.tax.toFixed(2)}</span>
+                <span className="font-bold text-slate-900">₹{summary.tax.toFixed(2)}</span>
               </div>
               <div className="flex justify-between pt-3 border-t border-slate-200 text-base font-black text-slate-900">
                 <span>Total Amount</span>
-                <span className="text-emerald-700">${summary.total.toFixed(2)}</span>
+                <span className="text-emerald-700">₹{summary.total.toFixed(2)}</span>
               </div>
             </div>
 
@@ -474,7 +474,7 @@ export default function Checkout() {
                 </>
               ) : paymentMethod === 'online' ? (
                 <>
-                  <Lock className="w-4 h-4" /> Pay & Place Order (${summary.total.toFixed(2)})
+                  <Lock className="w-4 h-4" /> Pay & Place Order (₹{summary.total.toFixed(2)})
                 </>
               ) : (
                 <>

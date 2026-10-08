@@ -166,12 +166,12 @@ export default function ProductDetail() {
               <div>
                 <span className="text-xs text-slate-400 block font-medium">Special Price</span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-black text-slate-900">
-                    ${Number(finalPrice).toFixed(2)}
+                  <span className="text-3xl font-black text-slate-900 font-display">
+                    ₹{Number(finalPrice).toFixed(2)}
                   </span>
                   {product.discount_percent > 0 && (
                     <span className="text-base text-slate-400 line-through">
-                      ${Number(product.price).toFixed(2)}
+                      ₹{Number(product.price).toFixed(2)}
                     </span>
                   )}
                 </div>
@@ -180,7 +180,7 @@ export default function ProductDetail() {
               {product.discount_percent > 0 && (
                 <div className="text-right">
                   <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-lg">
-                    Save ${savingsAmount.toFixed(2)}
+                    Save ₹{savingsAmount.toFixed(2)}
                   </span>
                 </div>
               )}
@@ -218,7 +218,7 @@ export default function ProductDetail() {
             <div className="text-xs">
               <p className="font-bold text-emerald-950">Guaranteed Scheduled Delivery</p>
               <p className="text-emerald-800/80 mt-0.5">
-                Pick your preferred 2-hour window during checkout. Free delivery above $35.
+                Pick your preferred 2-hour window during checkout. Free delivery above ₹299.
               </p>
             </div>
           </div>

@@ -211,7 +211,7 @@ export default function AdminOrders() {
                     </td>
 
                     <td className="py-3 px-4 font-black text-slate-900 font-mono">
-                      ${Number(o.total).toFixed(2)}
+                      ₹{Number(o.total).toFixed(2)}
                     </td>
 
                     <td className="py-3 px-4">
@@ -382,7 +382,7 @@ export default function AdminOrders() {
                   {viewOrderDetails.items?.map((it) => (
                     <div key={it.id} className="py-2 flex items-center justify-between">
                       <span>{it.quantity}x {it.name_snapshot} ({it.unit_snapshot})</span>
-                      <span className="font-bold font-mono">${(it.price_snapshot * it.quantity).toFixed(2)}</span>
+                      <span className="font-bold font-mono">₹{(it.price_snapshot * it.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
@@ -390,7 +390,7 @@ export default function AdminOrders() {
 
               <div className="flex justify-between items-center pt-2 font-bold text-sm">
                 <span>Total Amount:</span>
-                <span className="text-emerald-700 font-black">${Number(viewOrderDetails.total).toFixed(2)}</span>
+                <span className="text-emerald-700 font-black">₹{Number(viewOrderDetails.total).toFixed(2)}</span>
               </div>
             </div>
           </div>

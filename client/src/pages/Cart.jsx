@@ -82,7 +82,7 @@ export default function Cart() {
             <div className="flex justify-between text-xs sm:text-sm font-semibold text-emerald-950">
               <span className="flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-amber-500" />
-                Add <strong>${summary.amountNeededForFreeDelivery.toFixed(2)}</strong> more to get FREE Delivery
+                Add <strong>₹{summary.amountNeededForFreeDelivery.toFixed(2)}</strong> more to get FREE Delivery
               </span>
               <span>{progressPercent}%</span>
             </div>
@@ -120,11 +120,11 @@ export default function Cart() {
 
                   <div className="flex items-baseline gap-2">
                     <span className="text-sm font-black text-slate-900">
-                      ${Number(item.unitPrice).toFixed(2)}
+                      ₹{Number(item.unitPrice).toFixed(2)}
                     </span>
                     {item.discountPercent > 0 && (
                       <span className="text-xs text-slate-400 line-through">
-                        ${Number(item.originalPrice).toFixed(2)}
+                        ₹{Number(item.originalPrice).toFixed(2)}
                       </span>
                     )}
                   </div>
@@ -155,8 +155,8 @@ export default function Cart() {
 
                 {/* Total */}
                 <div className="text-right min-w-[70px]">
-                  <span className="text-base font-black text-slate-900 block">
-                    ${(Number(item.unitPrice) * item.quantity).toFixed(2)}
+                  <span className="text-base font-black text-slate-900 block font-display">
+                    ₹{(Number(item.unitPrice) * item.quantity).toFixed(2)}
                   </span>
                   <button
                     onClick={() => removeFromCart(item.id, item.productId)}
@@ -221,14 +221,14 @@ export default function Cart() {
                 <span className="flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-amber-600" /> You save today:
                 </span>
-                <span className="text-amber-700">${summary.savings.toFixed(2)}</span>
+                <span className="text-amber-700">₹{summary.savings.toFixed(2)}</span>
               </div>
             )}
 
             <div className="space-y-2.5 text-xs text-slate-600">
               <div className="flex justify-between">
                 <span>Items Subtotal</span>
-                <span className="font-bold text-slate-900">${summary.subtotal.toFixed(2)}</span>
+                <span className="font-bold text-slate-900">₹{summary.subtotal.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between items-center">
@@ -236,18 +236,18 @@ export default function Cart() {
                 {summary.deliveryFee === 0 ? (
                   <span className="font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">FREE</span>
                 ) : (
-                  <span className="font-bold text-slate-900">${summary.deliveryFee.toFixed(2)}</span>
+                  <span className="font-bold text-slate-900">₹{summary.deliveryFee.toFixed(2)}</span>
                 )}
               </div>
 
               <div className="flex justify-between">
                 <span>Estimated Taxes (5%)</span>
-                <span className="font-bold text-slate-900">${summary.tax.toFixed(2)}</span>
+                <span className="font-bold text-slate-900">₹{summary.tax.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between pt-3 border-t border-slate-200 text-base font-black text-slate-900">
                 <span>Total Payable</span>
-                <span className="text-emerald-700">${summary.total.toFixed(2)}</span>
+                <span className="text-emerald-700">₹{summary.total.toFixed(2)}</span>
               </div>
             </div>
 

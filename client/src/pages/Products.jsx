@@ -230,7 +230,7 @@ export default function Products() {
           )}
           {(queryMinPrice || queryMaxPrice) && (
             <span className="inline-flex items-center gap-1 bg-slate-100 border border-slate-200 text-slate-800 text-xs px-2.5 py-1 rounded-lg">
-              Price: ${queryMinPrice || '0'} - ${queryMaxPrice || 'Max'}
+              Price: ₹{queryMinPrice || '0'} - ₹{queryMaxPrice || 'Max'}
               <button onClick={() => applyFilters({ minPrice: '', maxPrice: '' })}><X className="w-3 h-3" /></button>
             </span>
           )}
@@ -319,7 +319,7 @@ export default function Products() {
           {/* Price Range */}
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-              Price Range ($)
+              Price Range (₹)
             </label>
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -327,7 +327,7 @@ export default function Products() {
                 min="0"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                placeholder="Min ($)"
+                placeholder="Min (₹)"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs focus:outline-none focus:border-emerald-500"
               />
               <input
@@ -335,7 +335,7 @@ export default function Products() {
                 min="0"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
-                placeholder="Max ($)"
+                placeholder="Max (₹)"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs focus:outline-none focus:border-emerald-500"
               />
             </div>
@@ -473,7 +473,7 @@ export default function Products() {
 
               {/* Price */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-2">Price Range ($)</label>
+                <label className="block text-xs font-bold text-slate-700 uppercase mb-2">Price Range (₹)</label>
                 <div className="grid grid-cols-2 gap-2">
                   <input
                     type="number"

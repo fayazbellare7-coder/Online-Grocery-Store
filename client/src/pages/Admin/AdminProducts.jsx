@@ -266,7 +266,7 @@ export default function AdminProducts() {
                     </td>
 
                     <td className="py-3 px-4 font-bold text-slate-900 font-mono">
-                      ${p.price.toFixed(2)}
+                      ₹{p.price.toFixed(2)}
                     </td>
 
                     <td className="py-3 px-4">
@@ -427,7 +427,7 @@ export default function AdminProducts() {
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Base Price ($) *</label>
+                  <label className="block font-bold text-slate-700 mb-1">Base Price (₹) *</label>
                   <input
                     type="number"
                     step="0.01"

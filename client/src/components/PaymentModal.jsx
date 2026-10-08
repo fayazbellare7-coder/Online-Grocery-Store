@@ -49,7 +49,7 @@ export default function PaymentModal({ isOpen, onClose, amount, onConfirmPayment
         {/* Amount bar */}
         <div className="bg-emerald-50 px-5 py-3 border-b border-emerald-100 flex items-center justify-between">
           <span className="text-xs font-semibold text-emerald-900">Total Payable Amount</span>
-          <span className="text-lg font-black text-emerald-700">${Number(amount).toFixed(2)}</span>
+          <span className="text-lg font-black text-emerald-700 font-display">₹{Number(amount).toFixed(2)}</span>
         </div>
 
         {/* Payment Tabs */}
@@ -137,10 +137,11 @@ export default function PaymentModal({ isOpen, onClose, amount, onConfirmPayment
                   type="text"
                   value={upiId}
                   onChange={(e) => setUpiId(e.target.value)}
+                  placeholder="username@okaxis / username@upi"
                   className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono"
                 />
               </div>
-              <p className="text-[11px] text-slate-500">Supports Google Pay, Apple Pay, PhonePe, Paytm, and BHIM.</p>
+              <p className="text-[11px] text-slate-500">Supports Google Pay, PhonePe, Paytm, BHIM, and Apple Pay.</p>
             </div>
           )}
 
@@ -148,10 +149,11 @@ export default function PaymentModal({ isOpen, onClose, amount, onConfirmPayment
             <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-2">
               <label className="block text-[11px] font-bold text-slate-700">Choose Bank</label>
               <select className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs">
-                <option>Chase Bank (Fast Checkout)</option>
-                <option>Bank of America</option>
-                <option>Wells Fargo</option>
-                <option>Citibank</option>
+                <option>HDFC Bank (Fast Checkout)</option>
+                <option>State Bank of India (SBI)</option>
+                <option>ICICI Bank</option>
+                <option>Axis Bank</option>
+                <option>Kotak Mahindra Bank</option>
               </select>
             </div>
           )}
@@ -192,7 +194,7 @@ export default function PaymentModal({ isOpen, onClose, amount, onConfirmPayment
             type="button"
             disabled={processing}
             onClick={handlePay}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-emerald-600/25 transition disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-emerald-600/25 transition disabled:opacity-50 flex items-center justify-center gap-2 font-display"
           >
             {processing ? (
               <>
@@ -200,7 +202,7 @@ export default function PaymentModal({ isOpen, onClose, amount, onConfirmPayment
                 Processing Mock Payment...
               </>
             ) : (
-              `Pay $${Number(amount).toFixed(2)}`
+              `Pay ₹${Number(amount).toFixed(2)}`
             )}
           </button>
 

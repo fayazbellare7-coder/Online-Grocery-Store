@@ -155,11 +155,11 @@ export default function ProductCard({ product }) {
           <div>
             <div className="flex items-baseline gap-1.5">
               <span className="text-lg font-black text-slate-900 font-display">
-                ${Number(finalPrice).toFixed(2)}
+                ₹{Number(finalPrice).toFixed(2)}
               </span>
               {product.discount_percent > 0 && (
                 <span className="text-xs text-slate-400 line-through font-medium">
-                  ${Number(product.price).toFixed(2)}
+                  ₹{Number(product.price).toFixed(2)}
                 </span>
               )}
             </div>

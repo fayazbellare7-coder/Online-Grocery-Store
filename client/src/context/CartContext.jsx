@@ -5,8 +5,8 @@ import toast from 'react-hot-toast';
 
 const CartContext = createContext(null);
 
-const FREE_DELIVERY_THRESHOLD = 35.0;
-const STANDARD_DELIVERY_FEE = 4.99;
+const FREE_DELIVERY_THRESHOLD = 299.0;
+const STANDARD_DELIVERY_FEE = 40.0;
 const TAX_RATE = 0.05;
 
 export function CartProvider({ children }) {

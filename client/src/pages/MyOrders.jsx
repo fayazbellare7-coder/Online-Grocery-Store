@@ -239,8 +239,8 @@ export default function MyOrders() {
                   <div className="md:col-span-3 text-right flex flex-col md:items-end justify-between gap-3">
                     <div>
                       <span className="text-xs text-slate-400">Total Amount</span>
-                      <p className="text-lg font-black text-slate-900 leading-tight">
-                        ${Number(order.total).toFixed(2)}
+                      <p className="text-lg font-black text-slate-900 leading-tight font-display">
+                        ₹{Number(order.total).toFixed(2)}
                       </p>
                       <span className="text-[10px] font-bold uppercase text-slate-500">
                         {order.paymentMethod === 'online' ? 'Prepaid Online' : 'Cash on Delivery'}

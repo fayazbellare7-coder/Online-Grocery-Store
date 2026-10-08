@@ -98,7 +98,7 @@ export default function Navbar() {
               Fast 2-Hour Delivery
             </span>
             <span className="hidden sm:inline text-emerald-100 font-medium">
-              Free delivery on orders over <strong className="text-white">$35</strong> | Use code <strong className="text-amber-300 font-mono tracking-wide">FRESH20</strong> for 20% OFF
+              Free delivery on orders over <strong className="text-white">₹299</strong> | Use code <strong className="text-amber-300 font-mono tracking-wide">FRESH20</strong> for 20% OFF
             </span>
           </div>
 
@@ -276,7 +276,7 @@ export default function Navbar() {
               <div className="hidden sm:block text-left text-xs leading-tight">
                 <p className="text-emerald-100 text-[10px] uppercase font-semibold">Cart Total</p>
                 <p className="font-extrabold text-white font-display text-sm">
-                  ${summary.total > 0 ? summary.total.toFixed(2) : '0.00'}
+                  ₹{summary.total > 0 ? summary.total.toFixed(2) : '0.00'}
                 </p>
               </div>
             </button>

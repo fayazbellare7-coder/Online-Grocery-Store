@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  DollarSign, 
+  IndianRupee, 
   ShoppingBag, 
   Package, 
   AlertTriangle, 
@@ -197,14 +197,14 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Revenue</span>
             <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-              <DollarSign className="w-4 h-4" />
+              <IndianRupee className="w-4 h-4" />
             </div>
           </div>
           <p className="text-2xl sm:text-3xl font-black text-slate-900">
-            ${stats.totalRevenue.toFixed(2)}
+            ₹{stats.totalRevenue.toFixed(2)}
           </p>
           <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
-            <TrendingUp className="w-3.5 h-3.5" /> +${stats.todayRevenue.toFixed(2)} today
+            <TrendingUp className="w-3.5 h-3.5" /> +₹{stats.todayRevenue.toFixed(2)} today
           </p>
         </div>
 
@@ -269,7 +269,7 @@ export default function AdminDashboard() {
               <p className="text-xs text-slate-400">Daily gross revenue across all delivery slots</p>
             </div>
             <span className="bg-emerald-50 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-xl">
-              USD ($)
+              INR (₹)
             </span>
           </div>
 
@@ -286,7 +286,7 @@ export default function AdminDashboard() {
                 <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} />
                 <Tooltip 
-                  formatter={(val) => [`$${Number(val).toFixed(2)}`, 'Revenue']}
+                  formatter={(val) => [`₹${Number(val).toFixed(2)}`, 'Revenue']}
                   contentStyle={{ backgroundColor: '#0f172a', color: '#fff', borderRadius: '12px', border: 'none', fontSize: '12px' }}
                 />
                 <Area 
@@ -364,7 +364,7 @@ export default function AdminDashboard() {
                   <tr key={p.id} className="hover:bg-slate-50/80 transition">
                     <td className="py-3 px-4 font-bold text-slate-900">{p.name}</td>
                     <td className="py-3 px-4 text-slate-500">{p.category_name}</td>
-                    <td className="py-3 px-4 font-mono font-bold">${p.price.toFixed(2)}</td>
+                    <td className="py-3 px-4 font-mono font-bold">₹{p.price.toFixed(2)}</td>
                     <td className="py-3 px-4">
                       <span className="bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-md font-bold">
                         {p.stock} units left
@@ -426,7 +426,7 @@ export default function AdminDashboard() {
                     {o.slot?.date} ({o.slot?.window || o.slot?.startTime})
                   </td>
                   <td className="py-3 px-4 font-black text-slate-900 font-mono">
-                    ${Number(o.total).toFixed(2)}
+                    ₹{Number(o.total).toFixed(2)}
                   </td>
                   <td className="py-3 px-4 uppercase text-[10px] font-bold text-slate-600">
                     {o.payment_method} ({o.payment_status})

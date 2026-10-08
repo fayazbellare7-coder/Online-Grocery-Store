@@ -224,7 +224,7 @@ export default function Home() {
 
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                 <span className="flex items-center gap-1.5 font-medium">
-                  <Truck className="w-4 h-4 text-emerald-600" /> Free with orders &gt; $35
+                  <Truck className="w-4 h-4 text-emerald-600" /> Free with orders &gt; ₹299
                 </span>
                 <span className="font-bold text-emerald-700">100% On-Time Guarantee</span>
               </div>
@@ -236,7 +236,7 @@ export default function Home() {
                 <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-amber-900 bg-amber-200/80 px-2.5 py-1 rounded-full">
                   <UtensilsCrossed className="w-3.5 h-3.5" /> Chef's Breakfast Bundle
                 </span>
-                <span className="text-xs font-bold text-amber-800 line-through">$14.48</span>
+                <span className="text-xs font-bold text-amber-800 line-through">₹249</span>
               </div>
 
               <div className="flex items-center justify-between gap-4">
@@ -248,7 +248,7 @@ export default function Home() {
                     Organic Avocados + Artisan Sourdough + Farm Eggs
                   </p>
                   <p className="text-lg font-black text-emerald-700 font-display mt-1">
-                    $12.49 <span className="text-xs text-slate-500 font-normal">for all 3 items</span>
+                    ₹199 <span className="text-xs text-slate-500 font-normal">for all 3 items</span>
                   </p>
                 </div>
 
@@ -537,7 +537,7 @@ export default function Home() {
               Get 20% OFF Your First Organic Order
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm max-w-md font-medium">
-              Use code at checkout for orders over $35. Includes complimentary chilled cold-chain delivery.
+              Use code at checkout for orders over ₹299. Includes complimentary chilled cold-chain delivery.
             </p>
           </div>
 

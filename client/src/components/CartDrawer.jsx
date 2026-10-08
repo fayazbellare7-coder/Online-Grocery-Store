@@ -72,7 +72,7 @@ export default function CartDrawer() {
                 <div className="flex justify-between text-xs font-semibold text-emerald-950 mb-1.5">
                   <span className="flex items-center gap-1">
                     <Truck className="w-3.5 h-3.5 text-emerald-600" />
-                    Add <strong>${summary.amountNeededForFreeDelivery.toFixed(2)}</strong> for FREE 2-Hour Delivery
+                    Add <strong>₹{summary.amountNeededForFreeDelivery.toFixed(2)}</strong> for FREE 2-Hour Delivery
                   </span>
                   <span className="font-bold text-emerald-700">{progressPercent}%</span>
                 </div>
@@ -120,11 +120,11 @@ export default function CartDrawer() {
                     <p className="text-[11px] text-slate-400 font-medium">{item.unit}</p>
                     <div className="flex items-baseline gap-1.5 mt-1">
                       <span className="text-xs sm:text-sm font-black text-slate-900 font-display">
-                        ${Number(item.unitPrice).toFixed(2)}
+                        ₹{Number(item.unitPrice).toFixed(2)}
                       </span>
                       {item.discountPercent > 0 && (
                         <span className="text-[10px] text-slate-400 line-through">
-                          ${Number(item.originalPrice).toFixed(2)}
+                          ₹{Number(item.originalPrice).toFixed(2)}
                         </span>
                       )}
                     </div>
@@ -172,7 +172,7 @@ export default function CartDrawer() {
                   <span className="flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-600" /> You are saving on this order
                   </span>
-                  <span className="text-amber-800 font-display">${summary.savings.toFixed(2)}</span>
+                  <span className="text-amber-800 font-display">₹{summary.savings.toFixed(2)}</span>
                 </div>
               )}
 
@@ -180,23 +180,23 @@ export default function CartDrawer() {
               <div className="space-y-1.5 text-xs text-slate-600 font-medium">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="font-bold text-slate-900">${summary.subtotal.toFixed(2)}</span>
+                  <span className="font-bold text-slate-900">₹{summary.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Scheduled Delivery</span>
                   {summary.deliveryFee === 0 ? (
                     <span className="font-black text-emerald-600">FREE</span>
                   ) : (
-                    <span className="font-bold text-slate-900">${summary.deliveryFee.toFixed(2)}</span>
+                    <span className="font-bold text-slate-900">₹{summary.deliveryFee.toFixed(2)}</span>
                   )}
                 </div>
                 <div className="flex justify-between">
                   <span>Estimated Tax (5%)</span>
-                  <span className="font-bold text-slate-900">${summary.tax.toFixed(2)}</span>
+                  <span className="font-bold text-slate-900">₹{summary.tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-slate-200 text-base font-black text-slate-900 font-display">
                   <span>Total Payable</span>
-                  <span className="text-emerald-700 font-black">${summary.total.toFixed(2)}</span>
+                  <span className="text-emerald-700 font-black">₹{summary.total.toFixed(2)}</span>
                 </div>
               </div>
 

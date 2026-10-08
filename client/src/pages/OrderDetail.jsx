@@ -156,8 +156,8 @@ export default function OrderDetail() {
 
           <div className="text-right">
             <span className="text-xs text-slate-400 block">Total Amount</span>
-            <span className="text-2xl font-black text-emerald-700">
-              ${Number(order.total).toFixed(2)}
+            <span className="text-2xl font-black text-emerald-700 font-display">
+              ₹{Number(order.total).toFixed(2)}
             </span>
           </div>
         </div>
@@ -240,10 +240,10 @@ export default function OrderDetail() {
 
                 <div className="text-right">
                   <span className="font-bold text-slate-500">
-                    {item.quantity} x ${Number(item.price_snapshot).toFixed(2)}
+                    {item.quantity} x ₹{Number(item.price_snapshot).toFixed(2)}
                   </span>
-                  <p className="font-black text-slate-900 text-sm">
-                    ${(Number(item.price_snapshot) * item.quantity).toFixed(2)}
+                  <p className="font-black text-slate-900 text-sm font-display">
+                    ₹{(Number(item.price_snapshot) * item.quantity).toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -254,23 +254,23 @@ export default function OrderDetail() {
           <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-2 text-xs text-slate-600 max-w-sm ml-auto">
             <div className="flex justify-between">
               <span>Items Subtotal</span>
-              <span className="font-bold text-slate-900">${Number(order.subtotal).toFixed(2)}</span>
+              <span className="font-bold text-slate-900">₹{Number(order.subtotal).toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>Delivery Fee</span>
               {order.deliveryFee === 0 ? (
                 <span className="font-bold text-emerald-600">FREE</span>
               ) : (
-                <span className="font-bold text-slate-900">${Number(order.deliveryFee).toFixed(2)}</span>
+                <span className="font-bold text-slate-900">₹{Number(order.deliveryFee).toFixed(2)}</span>
               )}
             </div>
             <div className="flex justify-between">
               <span>Taxes (5%)</span>
-              <span className="font-bold text-slate-900">${Number(order.tax).toFixed(2)}</span>
+              <span className="font-bold text-slate-900">₹{Number(order.tax).toFixed(2)}</span>
             </div>
-            <div className="flex justify-between pt-2 border-t border-slate-200 text-base font-black text-slate-900">
+            <div className="flex justify-between pt-2 border-t border-slate-200 text-base font-black text-slate-900 font-display">
               <span>Total Paid / Payable</span>
-              <span className="text-emerald-700">${Number(order.total).toFixed(2)}</span>
+              <span className="text-emerald-700">₹{Number(order.total).toFixed(2)}</span>
             </div>
           </div>
         </div>
