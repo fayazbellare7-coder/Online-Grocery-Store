@@ -6,12 +6,7 @@ import {
   Package, 
   AlertTriangle, 
   TrendingUp, 
-  Users, 
-  ChevronRight, 
-  Plus, 
   CheckCircle2, 
-  Clock,
-  Layers,
   ArrowUpRight
 } from 'lucide-react';
 import { 

@@ -5,14 +5,10 @@ import {
   Search, 
   Edit2, 
   Trash2, 
-  Eye, 
-  EyeOff, 
   X, 
-  Check, 
   AlertTriangle, 
-  Sparkles,
-  ChevronLeft,
-  ChevronRight
+  ChevronLeft, 
+  ChevronRight 
 } from 'lucide-react';
 import { getProducts, getCategories, createProduct, updateProduct, deleteProduct } from '../../services/dataService.js';
 import toast from 'react-hot-toast';

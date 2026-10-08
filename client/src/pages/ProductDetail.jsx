@@ -11,9 +11,7 @@ import {
   RotateCcw, 
   CheckCircle2, 
   ChevronRight,
-  Leaf,
-  Clock,
-  Package
+  Clock
 } from 'lucide-react';
 import { getProductById, getProducts } from '../services/dataService.js';
 import { useCart } from '../context/CartContext.jsx';

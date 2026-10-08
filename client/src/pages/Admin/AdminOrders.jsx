@@ -2,16 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { 
   ShoppingBag, 
   Search, 
-  Filter, 
   Truck, 
   CheckCircle2, 
   Clock, 
   XCircle, 
   Edit3, 
   X, 
-  MapPin,
-  ChevronLeft,
-  ChevronRight,
+  ChevronLeft, 
+  ChevronRight, 
   Eye
 } from 'lucide-react';
 import { getOrders, updateOrderStatus } from '../../services/dataService.js';

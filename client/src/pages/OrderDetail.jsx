@@ -9,10 +9,8 @@ import {
   RefreshCw, 
   Receipt, 
   CheckCircle2, 
-  AlertCircle, 
   Truck,
   CreditCard,
-  Banknote,
   ShieldCheck
 } from 'lucide-react';
 import { getOrderById, cancelOrder } from '../services/dataService.js';

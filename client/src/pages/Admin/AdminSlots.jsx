@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Calendar, CheckCircle2, AlertCircle, Edit2, X, Plus } from 'lucide-react';
+import { Clock, Calendar, Edit2, X } from 'lucide-react';
 import { getDeliverySlots, updateDeliverySlot } from '../../services/dataService.js';
 import toast from 'react-hot-toast';
 

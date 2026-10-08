@@ -9,7 +9,6 @@ import {
   Banknote, 
   CheckCircle2, 
   ShieldCheck, 
-  AlertCircle, 
   ArrowRight,
   ShoppingBag,
   Sparkles,

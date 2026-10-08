@@ -9,7 +9,6 @@ import {
   MapPin, 
   CheckCircle2, 
   Truck, 
-  AlertCircle,
   ShoppingBag
 } from 'lucide-react';
 import { getOrders, cancelOrder } from '../services/dataService.js';

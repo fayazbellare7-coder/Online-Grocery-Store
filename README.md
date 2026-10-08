@@ -69,8 +69,8 @@ npm run build
   - 40+ realistic grocery products across 7 categories (Fruits & Vegetables, Dairy & Eggs, Bakery & Bread, Snacks & Munchies, Beverages, Staples & Grains, Household & Cleaning).
   - Search, category filters, price range sliders, deals filter, in-stock filter, and sort options.
 - **Cart & Checkout**:
-  - Quantity adjustments, dynamic free-delivery progress bar (free shipping above $35), delivery fee and tax calculations.
-  - Multi-address management (Home, Work, Other) with default address selector.
+  - Quantity adjustments, dynamic free-delivery progress bar (free shipping above ₹299), delivery fee and GST calculations.
+  - Multi-address management (Home, Office, Other) with default address selector.
   - 14-day 2-hour delivery slot selection with capacity limits.
   - Payment options (Cash on Delivery, Simulated Instant Online Payment).
 - **Order Management & Live Tracking**:
